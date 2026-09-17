@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>电路手记 · mrzhang</title>
+<meta name="description" content="mrzhang 的嵌入式硬件项目作品集：原理图评审、PCB Layout 与固件调试记录">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%94%8C%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#EEF1EF;
+    --surface:#FFFFFF;
+    --surface-2:#E3E9E5;
+    --border:#C6D0CA;
+    --border-strong:#9FAEA6;
+    --text:#10171A;
+    --text-dim:#4C5C58;
+    --accent:#0C8F72;
+    --accent-ink:#F4FBF8;
+    --amber:#A85D0A;
+    --good:#0C8F72;
+    --good-bg:#DFF3EC;
+    --warn:#A85D0A;
+    --warn-bg:#F7E9D6;
+    --shadow: 0 1px 2px rgba(16,23,26,0.06), 0 8px 24px rgba(16,23,26,0.05);
+    --font-cjk:'Noto Sans SC', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --font-mono:'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#0A0F12;
+      --surface:#121A20;
+      --surface-2:#182229;
+      --border:#26333B;
+      --border-strong:#3A4952;
+      --text:#E7EEEC;
+      --text-dim:#93A6A2;
+      --accent:#3FDCB0;
+      --accent-ink:#06231A;
+      --amber:#F2A93B;
+      --good:#3FDCB0;
+      --good-bg:#123328;
+      --warn:#F2A93B;
+      --warn-bg:#3A2C10;
+      --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 12px 32px rgba(0,0,0,0.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0A0F12;
+    --surface:#121A20;
+    --surface-2:#182229;
+    --border:#26333B;
+    --border-strong:#3A4952;
+    --text:#E7EEEC;
+    --text-dim:#93A6A2;
+    --accent:#3FDCB0;
+    --accent-ink:#06231A;
+    --amber:#F2A93B;
+    --good:#3FDCB0;
+    --good-bg:#123328;
+    --warn:#F2A93B;
+    --warn-bg:#3A2C10;
+    --shadow: 0 1px 2px rgba(0,0,0,0.4), 0 12px 32px rgba(0,0,0,0.35);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-cjk);
+    line-height:1.65;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size:36px 36px;
+    background-attachment:local;
+  }
+
+  .wrap{max-width:960px;margin:0 auto;padding-inline:20px;}
+
+  a{color:inherit;}
+  img{max-width:100%;}
+
+  /* ---------- nav ---------- */
+  header.top{
+    position:sticky;top:env(safe-area-inset-top,0px);z-index:20;
+    background:color-mix(in srgb, var(--bg) 86%, transparent);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);
+  }
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:14px;}
+  .brand{display:flex;align-items:center;gap:9px;font-family:var(--font-mono);font-weight:600;font-size:15px;letter-spacing:.02em;}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);flex:none;}
+  nav.links{display:flex;gap:22px;font-size:13.5px;color:var(--text-dim);}
+  nav.links a{text-decoration:none;padding-block:4px;border-bottom:1px solid transparent;}
+  nav.links a:hover{color:var(--text);border-color:var(--accent);}
+
+  /* ---------- hero ---------- */
+  .hero{padding-block:56px 40px;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;color:var(--accent);
+    background:color-mix(in srgb, var(--accent) 12%, transparent);
+    border:1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+    padding:5px 11px;border-radius:999px;margin-bottom:18px;
+  }
+  h1.name{
+    font-size:clamp(32px,5vw,50px);
+    font-weight:900;
+    letter-spacing:-.01em;
+    margin:0 0 14px;
+    text-wrap:balance;
+  }
+  h1.name .role{
+    display:block;font-family:var(--font-mono);font-weight:500;font-size:.42em;color:var(--text-dim);letter-spacing:.01em;margin-top:10px;
+  }
+  p.lede{max-width:62ch;color:var(--text-dim);font-size:16.5px;margin:0 0 28px;}
+
+  .stat-row{display:flex;gap:0;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--surface);box-shadow:var(--shadow);max-width:640px;}
+  .stat{flex:1;padding:16px 18px;border-right:1px solid var(--border);}
+  .stat:last-child{border-right:none;}
+  .stat .num{font-family:var(--font-mono);font-variant-numeric:tabular-nums;font-weight:600;font-size:22px;color:var(--accent);}
+  .stat .lbl{font-size:12px;color:var(--text-dim);margin-top:3px;}
+
+  /* ---------- section heading ---------- */
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin:64px 0 24px;}
+  .sec-head .idx{font-family:var(--font-mono);font-size:12px;color:var(--text-dim);letter-spacing:.08em;}
+  .sec-head h2{font-size:22px;margin:0;font-weight:800;}
+  .sec-head .rule{flex:1;height:1px;background:repeating-linear-gradient(90deg, var(--border-strong) 0 6px, transparent 6px 12px);}
+
+  /* ---------- project cards ---------- */
+  .projects{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;}
+  @media (max-width:720px){.projects{grid-template-columns:1fr;}}
+
+  .card{
+    position:relative;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:22px 22px 20px;
+    box-shadow:var(--shadow);
+    display:flex;flex-direction:column;gap:14px;
+  }
+  .card::before,.card::after{
+    content:"";position:absolute;top:10px;width:6px;height:6px;border-radius:50%;
+    background:var(--border-strong);
+  }
+  .card::before{left:10px;}
+  .card::after{right:10px;}
+
+  .card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;}
+  .card h3{font-size:17.5px;margin:0;font-weight:800;line-height:1.4;}
+  .status{
+    flex:none;font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.03em;
+    padding:4px 9px;border-radius:999px;white-space:nowrap;
+  }
+  .status.done{color:var(--good);background:var(--good-bg);}
+  .status.wip{color:var(--warn);background:var(--warn-bg);}
+
+  .chips{display:flex;flex-wrap:wrap;gap:6px;}
+  .chip{
+    font-family:var(--font-mono);font-size:11.5px;color:var(--text-dim);
+    background:var(--surface-2);border:1px solid var(--border);
+    padding:3px 8px;border-radius:5px;
+  }
+
+  .highlights{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;}
+  .highlights li{
+    position:relative;padding-left:16px;font-size:13.5px;color:var(--text-dim);
+  }
+  .highlights li::before{
+    content:"";position:absolute;left:0;top:7px;width:6px;height:1.5px;background:var(--accent);
+  }
+
+  /* ---------- skills ---------- */
+  .skill-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;}
+  .skill{
+    background:var(--surface);border:1px solid var(--border);border-radius:9px;
+    padding:12px 14px;font-size:13.5px;box-shadow:var(--shadow);
+    display:flex;align-items:center;gap:9px;
+  }
+  .skill .tick{font-family:var(--font-mono);color:var(--accent);font-size:12px;}
+
+  /* ---------- contact ---------- */
+  .contact-card{
+    background:var(--surface);border:1px solid var(--border);border-radius:12px;
+    padding:28px 26px;box-shadow:var(--shadow);
+    display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;
+  }
+  .contact-card p{margin:0;color:var(--text-dim);font-size:14px;max-width:40ch;}
+  .contact-card h3{margin:0 0 6px;font-size:18px;}
+  .mail-btn{
+    font-family:var(--font-mono);font-size:13.5px;font-weight:600;
+    background:var(--accent);color:var(--accent-ink);
+    padding:11px 18px;border-radius:8px;text-decoration:none;white-space:nowrap;
+  }
+
+  footer{padding-block:36px 44px;color:var(--text-dim);font-size:12.5px;text-align:center;font-family:var(--font-mono);}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap topbar">
+    <div class="brand"><span class="dot"></span>mrzhang</div>
+    <nav class="links">
+      <a href="#projects">项目</a>
+      <a href="#skills">技能</a>
+      <a href="#contact">联系</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <span class="eyebrow">● SCHEMATIC / PCB / FIRMWARE</span>
+    <h1 class="name">硬件工程师 mrzhang<span class="role">EMBEDDED CONTROL BOARD DESIGN &amp; DEBUG</span></h1>
+    <p class="lede">专注嵌入式控制板设计与调试，工作覆盖原理图设计、PCB Layout 到电路排故的完整链路，项目集中在工业通信与运动 / 激光控制领域。</p>
+    <div class="stat-row">
+      <div class="stat"><div class="num">04</div><div class="lbl">在录项目</div></div>
+      <div class="stat"><div class="num">EtherCAT</div><div class="lbl">工业以太网</div></div>
+      <div class="stat"><div class="num">STM32 / FPGA</div><div class="lbl">主控平台</div></div>
+    </div>
+  </section>
+
+  <section id="projects">
+    <div class="sec-head"><span class="idx">01</span><h2>项目</h2><span class="rule"></span></div>
+    <div class="projects">
+
+      <article class="card">
+        <div class="card-head">
+          <h3>EtherCAT 从站控制板</h3>
+          <span class="status done">评审完成</span>
+        </div>
+        <div class="chips">
+          <span class="chip">LAN9252</span>
+          <span class="chip">STM32F407ZGT6</span>
+          <span class="chip">ACX750 FPGA</span>
+        </div>
+        <ul class="highlights">
+          <li>完成从原理图评审到问题定位的全链路排查，涵盖 DC-DC、编码器反馈与激光控制 I/O</li>
+          <li>修正 LAN9252 CHIP_MODE 上下拉、TESTMODE 接地及 PDR_ON 连接错误</li>
+          <li>定位 E2PSIZE 引脚配置隐患：错误上拉会使 EEPROM 误选 128 字节而非 64KB，导致 ESI 加载失败</li>
+          <li>核算 150Ω 限流电阻，使 LED 亮度（约 8mA / 41mcd）落在芯片灌电流安全区间内</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <h3>多功能控制板</h3>
+          <span class="status wip">调试联调中</span>
+        </div>
+        <div class="chips">
+          <span class="chip">STM32F407</span>
+          <span class="chip">W5500</span>
+          <span class="chip">LAN9252</span>
+          <span class="chip">ACX750 FPGA</span>
+        </div>
+        <ul class="highlights">
+          <li>负责 PCB Layout 关键决策：QFN 焊盘处理、覆铜策略与 SMA 射频接口封装</li>
+          <li>设计并多轮迭代 24V PMOS 反接保护电路，最终方案为 SMAJ33CA + 15V 稳压管钳位 + 47KΩ 栅极下拉</li>
+          <li>修正 LMR51450 24V→5V 降压电路反馈电阻方向错误，输出稳定在 4.99V</li>
+          <li>排查 SWD 烧录 "No target connected" 故障与 Flash 掉电后坐标方向设置丢失的固件 Bug</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <h3>信号调理板</h3>
+          <span class="status wip">原理图迭代中</span>
+        </div>
+        <div class="chips">
+          <span class="chip">OR 门逻辑</span>
+          <span class="chip">24V 光耦隔离</span>
+          <span class="chip">模拟多路复用</span>
+        </div>
+        <ul class="highlights">
+          <li>原理图多轮评审与迭代，覆盖输入隔离、多路复用与 LED 状态指示驱动电路</li>
+          <li>定位并修正引脚网络标签不匹配问题</li>
+          <li>排查并解决传感器兼容性隐患</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <div class="card-head">
+          <h3>FPGA 流水灯教学项目</h3>
+          <span class="status done">Demo 已完成</span>
+        </div>
+        <div class="chips">
+          <span class="chip">XC7A35T</span>
+          <span class="chip">ACX750 核心板</span>
+          <span class="chip">Vivado 2018.3</span>
+        </div>
+        <ul class="highlights">
+          <li>从工程创建、引脚约束到时序验证的完整实现流程，不跳过任何步骤</li>
+          <li>驱动 12 路 LED 按 1 秒间隔顺序点亮 / 熄灭</li>
+          <li>系统时钟由 50MHz 有源晶振提供，全部 I/O 电平为 3.3V</li>
+        </ul>
+      </article>
+
+    </div>
+  </section>
+
+  <section id="skills">
+    <div class="sec-head"><span class="idx">02</span><h2>技能</h2><span class="rule"></span></div>
+    <div class="skill-grid">
+      <div class="skill"><span class="tick">▸</span>原理图设计与评审</div>
+      <div class="skill"><span class="tick">▸</span>PCB Layout</div>
+      <div class="skill"><span class="tick">▸</span>电路排故 / 硬件调试</div>
+      <div class="skill"><span class="tick">▸</span>STM32 嵌入式固件</div>
+      <div class="skill"><span class="tick">▸</span>FPGA / Verilog</div>
+      <div class="skill"><span class="tick">▸</span>EtherCAT / 工业以太网</div>
+      <div class="skill"><span class="tick">▸</span>电源与保护电路设计</div>
+      <div class="skill"><span class="tick">▸</span>上位机联调（C#）</div>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="sec-head"><span class="idx">03</span><h2>联系</h2><span class="rule"></span></div>
+    <div class="contact-card">
+      <div>
+        <h3>想聊聊硬件项目？</h3>
+        <p>欢迎交流原理图评审、PCB Layout 或工业通信相关的问题。</p>
+      </div>
+      <a class="mail-btn" href="mailto:zhangwei63120829@gmail.com">发邮件联系 →</a>
+    </div>
+  </section>
+</main>
+
+<footer>电路手记 · mrzhang 的硬件项目作品集</footer>
+
+</body>
+</html>
