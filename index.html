@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>苏州雅之芯科技有限公司 · 控制板</title>
-<meta name="description" content="多功能激光运动控制板：EtherCAT从站通信、双轴运动控制与激光工艺输出，面向工业以太网产线的国产化选型方案">
+<meta name="description" content="多功能激光运动控制板：EtherCAT从站通信、四轴运动控制与14种激光工艺输出模式，面向工业以太网产线的国产化选型方案">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%94%8C%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
@@ -133,10 +133,17 @@
   .spec-table td{font-weight:500;}
 
   /* ---------- modes ---------- */
-  .modes{display:flex;flex-direction:column;gap:16px;}
+  .modes{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;align-items:start;}
+  @media (max-width:900px){.modes{grid-template-columns:1fr;}}
+  .mode-group{grid-column:1/-1;margin:10px 0 -4px;}
+  .mode-group:first-child{margin-top:0;}
+  .mode-group h4{
+    margin:0;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--text-dim);border-bottom:1px solid var(--border);padding-bottom:8px;
+  }
   .mode-panel{
     background:var(--surface);border:1px solid var(--border);border-radius:12px;
-    padding:22px 24px;box-shadow:var(--shadow);
+    padding:22px 24px;box-shadow:var(--shadow);height:100%;
   }
   .mode-panel .mode-head{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
   .mode-panel .num{
@@ -220,7 +227,7 @@
   <section class="hero">
     <span class="eyebrow">● ETHERCAT · MOTION · LASER CONTROL</span>
     <h1 class="name">多功能激光运动控制板</h1>
-    <p class="lede">一块控制板，集成 EtherCAT 从站通信、双轴运动控制与激光工艺输出接口 —— 面向工业以太网产线的国产化选型方案，支持主流运动控制主站在线组态。</p>
+    <p class="lede">一块控制板，集成 EtherCAT 从站通信、四轴运动控制与 4 路独立激光工艺输出引擎 —— 面向工业以太网产线的国产化选型方案，支持主流运动控制主站在线组态。</p>
     <div class="cta-row">
       <a class="btn primary" href="#contact">咨询报价 →</a>
       <a class="btn ghost" href="#specs">查看技术参数</a>
@@ -229,7 +236,7 @@
       <span class="badge">EtherCAT · CoE</span>
       <span class="badge">STM32 主控</span>
       <span class="badge">FPGA 硬件加速</span>
-      <span class="badge">X/Y 双轴运动</span>
+      <span class="badge">X/Y/Z/E 四轴运动</span>
       <span class="badge">激光工艺输出</span>
       <span class="badge">24V 工业电源</span>
     </div>
@@ -255,8 +262,8 @@
       </article>
       <article class="feature">
         <span class="tag">MOTION</span>
-        <h3>双轴运动控制</h3>
-        <p>X / Y 轴独立方向配置与参数管理，运动设置写入 Flash，断电重启后自动恢复。</p>
+        <h3>四轴位置反馈与 4 路独立激光引擎</h3>
+        <p>X / Y / Z 三个直线坐标轴 + 一个可无限旋转的 E 轴，方向与检测边沿独立可配；4 路完全独立的激光输出引擎（E1~E4）分别支持 14 种工作模式，参数写入 Flash，断电重启自动恢复。</p>
       </article>
       <article class="feature">
         <span class="tag">LASER I/O</span>
@@ -278,8 +285,10 @@
       <tr><th>逻辑协处理</th><td>Xilinx FPGA</td></tr>
       <tr><th>工业总线</th><td>EtherCAT 从站，CoE 协议</td></tr>
       <tr><th>以太网接口</th><td>标准 TCP/IP</td></tr>
-      <tr><th>运动轴数</th><td>X / Y 双轴，方向独立可配置</td></tr>
+      <tr><th>运动轴数</th><td>X / Y / Z 直线轴 + E 旋转轴（可无限旋转），方向与检测边沿独立可配置</td></tr>
       <tr><th>位置反馈</th><td>增量式编码器输入</td></tr>
+      <tr><th>激光输出引擎</th><td>4 路完全独立（E1~E4），每路可单独配置 14 种工作模式之一</td></tr>
+      <tr><th>外部同步接口</th><td>TTL-IN 触发输入 + 激光同步信号 SYN1/SYN2，检测边沿均可配置</td></tr>
       <tr><th>输入电压</th><td>24V DC</td></tr>
       <tr><th>电源保护</th><td>PMOS 防反接 + TVS 双向钳位 + 3A 熔断三重防护</td></tr>
       <tr><th>参数存储</th><td>Flash 掉电保存，重启自动加载</td></tr>
@@ -289,245 +298,283 @@
 
   <section id="modes">
     <div class="sec-head"><span class="idx">03</span><h2>运行模式</h2><span class="rule"></span></div>
-    <p class="sec-note">以下模式基于配套上位机软件功能整理，配合示意时序图理解各模式下的信号关系；具体细节以实际固件版本为准，选型前欢迎联系确认。</p>
+    <p class="sec-note">板卡为 4 路完全独立的激光输出引擎（E1~E4），每路可单独配置以下 14 种工作模式之一；外部输入包括 TTL-IN 触发与激光同步信号（SYN1/SYN2），下方时序图标注了各模式下位置、同步信号、TTL-IN 与 OUT 的对应关系。具体细节以实际固件版本为准，选型前欢迎联系确认。</p>
     <div class="modes">
 
+      <div class="mode-group"><h4>电平与跟随类</h4></div>
+
       <article class="mode-panel">
-        <div class="mode-head"><span class="num">01</span><h3>定位模式</h3></div>
-        <p>X / Y 轴按目标坐标独立发出点位脉冲，驱动器执行到位后，控制板检测到位信号并进行误差补偿微调，确保停止位置收敛在允许偏差范围内，适用于打标、钻孔等需要精确停点的工位。</p>
-        <figure class="diagram">
-          <svg viewBox="0 0 640 190" role="img" aria-label="定位模式时序：X 轴与 Y 轴各自完成点位脉冲后进行误差补偿微调，两轴均到位后到位信号置高">
-            <line class="guide" x1="310" y1="25" x2="310" y2="165"/>
-            <text class="lbl" x="318" y="32">到位判定</text>
-
-            <text class="lbl-strong" x="20" y="45">X 轴脉冲</text>
-            <line class="axis" x1="90" y1="52" x2="580" y2="52"/>
-            <line class="sig" x1="100" y1="52" x2="100" y2="38"/>
-            <line class="sig" x1="109" y1="52" x2="109" y2="38"/>
-            <line class="sig" x1="118" y1="52" x2="118" y2="38"/>
-            <line class="sig" x1="127" y1="52" x2="127" y2="38"/>
-            <line class="sig" x1="136" y1="52" x2="136" y2="38"/>
-            <line class="sig" x1="145" y1="52" x2="145" y2="38"/>
-            <line class="sig" x1="154" y1="52" x2="154" y2="38"/>
-            <line class="sig" x1="163" y1="52" x2="163" y2="38"/>
-            <line class="sig" x1="172" y1="52" x2="172" y2="38"/>
-            <line class="sig" x1="181" y1="52" x2="181" y2="38"/>
-            <line class="sig" x1="190" y1="52" x2="190" y2="38"/>
-            <line class="sig" x1="199" y1="52" x2="199" y2="38"/>
-            <line class="sig" x1="208" y1="52" x2="208" y2="38"/>
-            <line class="sig" x1="217" y1="52" x2="217" y2="38"/>
-            <line class="sig" x1="226" y1="52" x2="226" y2="38"/>
-            <line class="sig" x1="235" y1="52" x2="235" y2="38"/>
-            <line class="sig" x1="244" y1="52" x2="244" y2="38"/>
-            <line class="sig" x1="253" y1="52" x2="253" y2="38"/>
-            <line class="sig-accent" x1="280" y1="52" x2="280" y2="38"/>
-            <line class="sig-accent" x1="290" y1="52" x2="290" y2="38"/>
-            <line class="sig-accent" x1="300" y1="52" x2="300" y2="38"/>
-
-            <text class="lbl-strong" x="20" y="95">Y 轴脉冲</text>
-            <line class="axis" x1="90" y1="102" x2="580" y2="102"/>
-            <line class="sig" x1="100" y1="102" x2="100" y2="88"/>
-            <line class="sig" x1="111" y1="102" x2="111" y2="88"/>
-            <line class="sig" x1="122" y1="102" x2="122" y2="88"/>
-            <line class="sig" x1="133" y1="102" x2="133" y2="88"/>
-            <line class="sig" x1="144" y1="102" x2="144" y2="88"/>
-            <line class="sig" x1="155" y1="102" x2="155" y2="88"/>
-            <line class="sig" x1="166" y1="102" x2="166" y2="88"/>
-            <line class="sig" x1="177" y1="102" x2="177" y2="88"/>
-            <line class="sig" x1="188" y1="102" x2="188" y2="88"/>
-            <line class="sig" x1="199" y1="102" x2="199" y2="88"/>
-            <line class="sig" x1="210" y1="102" x2="210" y2="88"/>
-            <line class="sig" x1="221" y1="102" x2="221" y2="88"/>
-            <line class="sig" x1="232" y1="102" x2="232" y2="88"/>
-            <line class="sig-accent" x1="280" y1="102" x2="280" y2="88"/>
-            <line class="sig-accent" x1="292" y1="102" x2="292" y2="88"/>
-
-            <text class="lbl-strong" x="20" y="146">到位信号</text>
-            <line class="axis" x1="90" y1="150" x2="580" y2="150"/>
-            <polyline class="sig-accent" points="90,150 310,150 310,132 580,132"/>
+        <div class="mode-head"><span class="num">01</span><h3>高低电平静态输出</h3></div>
+        <p>最基础的引擎工作模式，不涉及频率或脉冲数量配置，仅在开启/关闭之间翻转一次输出电平；开启后电平保持不变，直至下一次翻转，适合作为激光整体使能或光闸开关信号。</p>
+<figure class="diagram">
+          <svg viewBox="0 0 460 92" role="img" aria-label="高低电平静态输出时序：使能置1时输出电平翻转一次并保持，置0时停止但不改变已选模式">
+<text class="lbl-strong" x="15" y="34">使能 EN</text>
+<path class="sig" d="M95.0,40.0 L143.3,40.0 L143.3,20.0 L440.0,20.0"/>
+<text class="lbl-strong" x="15" y="68">OUT</text>
+<path class="sig-accent" d="M95.0,74.0 L143.3,74.0 L143.3,54.0 L440.0,54.0"/>
+<line class="guide" x1="143.3" y1="20.0" x2="143.3" y2="74.0"/>
           </svg>
-          <figcaption>X、Y 两轴各自完成主体脉冲后进入误差补偿微调（图中橙色小簇脉冲），两轴均确认到位后「到位信号」置高，通知上位机可执行下一动作。</figcaption>
+          <figcaption>该模式不涉及位置、TTL-IN 或激光同步信号：使能位由 0 翻为 1 时，输出电平翻转一次并保持；使能置 0 仅停止输出，不改变已配置的模式，用作激光使能、光闸等简单开关量控制。</figcaption>
         </figure>
       </article>
 
       <article class="mode-panel">
-        <div class="mode-head"><span class="num">02</span><h3>轨迹跟随模式</h3></div>
-        <p>运动过程中脉冲频率按加速—匀速—减速的速度曲线连续变化，避免速度突变造成的冲击与丢步，使加工路径保持平滑过渡，适用于切割、雕刻等连续走线的加工场景。</p>
-        <figure class="diagram">
-          <svg viewBox="0 0 640 200" role="img" aria-label="轨迹跟随模式时序：脉冲频率随速度曲线在加速、匀速、减速三阶段连续变化">
-            <text class="lbl" x="175" y="18" text-anchor="middle">加速</text>
-            <text class="lbl" x="325" y="18" text-anchor="middle">匀速</text>
-            <text class="lbl" x="475" y="18" text-anchor="middle">减速</text>
-            <line class="guide" x1="250" y1="28" x2="250" y2="165"/>
-            <line class="guide" x1="400" y1="28" x2="400" y2="165"/>
-
-            <text class="lbl-strong" x="20" y="63">速度曲线</text>
-            <line class="axis" x1="90" y1="95" x2="560" y2="95"/>
-            <polyline class="sig-accent" points="100,95 250,40 400,40 550,95"/>
-
-            <text class="lbl-strong" x="20" y="133">脉冲频率</text>
-            <line class="axis" x1="90" y1="150" x2="560" y2="150"/>
-            <line class="sig" x1="100" y1="150" x2="100" y2="130"/>
-            <line class="sig" x1="122.0" y1="150" x2="122.0" y2="130"/>
-            <line class="sig" x1="138.7" y1="150" x2="138.7" y2="130"/>
-            <line class="sig" x1="152.9" y1="150" x2="152.9" y2="130"/>
-            <line class="sig" x1="165.4" y1="150" x2="165.4" y2="130"/>
-            <line class="sig" x1="176.8" y1="150" x2="176.8" y2="130"/>
-            <line class="sig" x1="187.3" y1="150" x2="187.3" y2="130"/>
-            <line class="sig" x1="197.1" y1="150" x2="197.1" y2="130"/>
-            <line class="sig" x1="206.3" y1="150" x2="206.3" y2="130"/>
-            <line class="sig" x1="215.0" y1="150" x2="215.0" y2="130"/>
-            <line class="sig" x1="223.4" y1="150" x2="223.4" y2="130"/>
-            <line class="sig" x1="231.3" y1="150" x2="231.3" y2="130"/>
-            <line class="sig" x1="239.0" y1="150" x2="239.0" y2="130"/>
-            <line class="sig" x1="246.3" y1="150" x2="246.3" y2="130"/>
-            <line class="sig" x1="250" y1="150" x2="250" y2="130"/>
-            <line class="sig" x1="257" y1="150" x2="257" y2="130"/>
-            <line class="sig" x1="264" y1="150" x2="264" y2="130"/>
-            <line class="sig" x1="271" y1="150" x2="271" y2="130"/>
-            <line class="sig" x1="278" y1="150" x2="278" y2="130"/>
-            <line class="sig" x1="285" y1="150" x2="285" y2="130"/>
-            <line class="sig" x1="292" y1="150" x2="292" y2="130"/>
-            <line class="sig" x1="299" y1="150" x2="299" y2="130"/>
-            <line class="sig" x1="306" y1="150" x2="306" y2="130"/>
-            <line class="sig" x1="313" y1="150" x2="313" y2="130"/>
-            <line class="sig" x1="320" y1="150" x2="320" y2="130"/>
-            <line class="sig" x1="327" y1="150" x2="327" y2="130"/>
-            <line class="sig" x1="334" y1="150" x2="334" y2="130"/>
-            <line class="sig" x1="341" y1="150" x2="341" y2="130"/>
-            <line class="sig" x1="348" y1="150" x2="348" y2="130"/>
-            <line class="sig" x1="355" y1="150" x2="355" y2="130"/>
-            <line class="sig" x1="362" y1="150" x2="362" y2="130"/>
-            <line class="sig" x1="369" y1="150" x2="369" y2="130"/>
-            <line class="sig" x1="376" y1="150" x2="376" y2="130"/>
-            <line class="sig" x1="383" y1="150" x2="383" y2="130"/>
-            <line class="sig" x1="390" y1="150" x2="390" y2="130"/>
-            <line class="sig" x1="397" y1="150" x2="397" y2="130"/>
-            <line class="sig" x1="400" y1="150" x2="400" y2="130"/>
-            <line class="sig" x1="407.0" y1="150" x2="407.0" y2="130"/>
-            <line class="sig" x1="414.2" y1="150" x2="414.2" y2="130"/>
-            <line class="sig" x1="421.7" y1="150" x2="421.7" y2="130"/>
-            <line class="sig" x1="429.5" y1="150" x2="429.5" y2="130"/>
-            <line class="sig" x1="437.6" y1="150" x2="437.6" y2="130"/>
-            <line class="sig" x1="446.0" y1="150" x2="446.0" y2="130"/>
-            <line class="sig" x1="454.9" y1="150" x2="454.9" y2="130"/>
-            <line class="sig" x1="464.2" y1="150" x2="464.2" y2="130"/>
-            <line class="sig" x1="474.1" y1="150" x2="474.1" y2="130"/>
-            <line class="sig" x1="484.6" y1="150" x2="484.6" y2="130"/>
-            <line class="sig" x1="496.0" y1="150" x2="496.0" y2="130"/>
-            <line class="sig" x1="508.4" y1="150" x2="508.4" y2="130"/>
-            <line class="sig" x1="522.2" y1="150" x2="522.2" y2="130"/>
-            <line class="sig" x1="538.0" y1="150" x2="538.0" y2="130"/>
+        <div class="mode-head"><span class="num">02</span><h3>TTL 电平跟随</h3></div>
+        <p>输出实时跟随外部 TTL 输入引脚电平变化，不做延时或整形处理，相当于软件可控的透传直通，适合由外部信号直接决定输出通断的场合。</p>
+<figure class="diagram">
+          <svg viewBox="0 0 460 92" role="img" aria-label="TTL 电平跟随时序：输出实时跟随外部 TTL 输入电平变化，不经延时整形">
+<text class="lbl-strong" x="15" y="34">TTL-IN</text>
+<path class="sig" d="M95.0,40.0 L146.8,40.0 L146.8,20.0 L239.9,20.0 L239.9,40.0 L302.0,40.0 L302.0,20.0 L388.2,20.0 L388.2,40.0 L440.0,40.0"/>
+<text class="lbl-strong" x="15" y="68">OUT</text>
+<path class="sig-accent" d="M95.0,74.0 L146.8,74.0 L146.8,54.0 L239.9,54.0 L239.9,74.0 L302.0,74.0 L302.0,54.0 L388.2,54.0 L388.2,74.0 L440.0,74.0"/>
           </svg>
-          <figcaption>脉冲频率随速度曲线连续变化：加减速阶段脉冲逐渐疏密过渡，匀速阶段脉冲密集均匀，避免速度突变导致丢步或冲击。</figcaption>
+          <figcaption>输出与 TTL-IN 逐点一致、无附加延时：该模式不涉及位置或激光同步信号，相当于软件可控的实时透传直通。</figcaption>
+        </figure>
+      </article>
+
+      <div class="mode-group"><h4>边沿触发脉冲输出</h4></div>
+
+      <article class="mode-panel">
+        <div class="mode-head"><span class="num">03</span><h3>TTL 边沿触发定频定量脉冲输出</h3></div>
+        <p>预先配置输出频率、占空比与单次脉冲数量；每检测到一次外部 TTL 输入边沿，即在输出端连续发出设定数量的脉冲，发送完毕自动停止，等待下一次触发。</p>
+<figure class="diagram">
+          <svg viewBox="0 0 460 92" role="img" aria-label="TTL 边沿触发定频定量脉冲输出时序：每检测到一次 TTL-IN 边沿即输出设定数量的脉冲串">
+<text class="lbl-strong" x="15" y="34">TTL-IN</text>
+<path class="sig" d="M95.0,40.0 L136.4,40.0 L136.4,20.0 L150.2,20.0 L150.2,40.0 L284.8,40.0 L284.8,20.0 L298.5,20.0 L298.5,40.0 L440.0,40.0"/>
+<text class="lbl-strong" x="15" y="68">OUT</text>
+<path class="sig-accent" d="M95.0,74.0 L136.4,74.0 L136.4,54.0 L141.4,54.0 L141.4,74.0 L148.4,74.0 L148.4,54.0 L153.4,54.0 L153.4,74.0 L160.4,74.0 L160.4,54.0 L165.4,54.0 L165.4,74.0 L172.4,74.0 L172.4,54.0 L177.4,54.0 L177.4,74.0 L184.4,74.0 L184.4,54.0 L189.4,54.0 L189.4,74.0 L196.4,74.0 M196.4,74.0 L284.8,74.0 L284.8,54.0 L289.8,54.0 L289.8,74.0 L296.8,74.0 L296.8,54.0 L301.8,54.0 L301.8,74.0 L308.8,74.0 L308.8,54.0 L313.8,54.0 L313.8,74.0 L320.8,74.0 L320.8,54.0 L325.8,54.0 L325.8,74.0 L332.8,74.0 L332.8,54.0 L337.8,54.0 L337.8,74.0 L344.8,74.0 L440.0,74.0"/>
+<line class="guide" x1="136.4" y1="20.0" x2="136.4" y2="74.0"/>
+<line class="guide" x1="284.8" y1="20.0" x2="284.8" y2="74.0"/>
+          </svg>
+          <figcaption>预先配置好频率、占空比与单次脉冲数；每检测到一次 TTL-IN 边沿（沿方向可配置），即连续输出设定数量的脉冲，发送完毕自动停止并等待下一次触发。该模式不使用激光同步信号。</figcaption>
+        </figure>
+      </article>
+
+      <div class="mode-group"><h4>位置同步输出（PSO）</h4></div>
+
+      <article class="mode-panel">
+        <div class="mode-head"><span class="num">04</span><h3>无激光同步 PSO 距离输出</h3></div>
+        <p>以编码器实测的运动位置为基准，轴每运动到设定的距离阈值，就在输出端产生一个脉冲，实现按等距离触发的位置同步输出，不依赖外部激光同步信号。</p>
+<figure class="diagram">
+          <svg viewBox="0 0 460 92" role="img" aria-label="无激光同步 PSO 距离输出时序：轴运动每达到设定距离阈值即立即输出一个脉冲">
+<text class="lbl-strong" x="15" y="34">位置</text>
+<path class="sig-accent" d="M95.0,40.9 L440.0,21.1"/>
+<circle class="fill-accent" cx="164.0" cy="36.9" r="3.4"/>
+<circle class="fill-accent" cx="233.0" cy="33.0" r="3.4"/>
+<circle class="fill-accent" cx="302.0" cy="29.0" r="3.4"/>
+<circle class="fill-accent" cx="371.0" cy="25.1" r="3.4"/>
+<text class="lbl-strong" x="15" y="68">OUT</text>
+<path class="sig-accent" d="M95.0,74.0 L164.0,74.0 L164.0,54.0 L169.0,54.0 L169.0,74.0 M169.0,74.0 L233.0,74.0 L233.0,54.0 L238.0,54.0 L238.0,74.0 M238.0,74.0 L302.0,74.0 L302.0,54.0 L307.0,54.0 L307.0,74.0 M307.0,74.0 L371.0,74.0 L371.0,54.0 L376.0,54.0 L376.0,74.0 L440.0,74.0"/>
+<line class="guide" x1="164.0" y1="20.0" x2="164.0" y2="74.0"/>
+<line class="guide" x1="233.0" y1="20.0" x2="233.0" y2="74.0"/>
+<line class="guide" x1="302.0" y1="20.0" x2="302.0" y2="74.0"/>
+<line class="guide" x1="371.0" y1="20.0" x2="371.0" y2="74.0"/>
+          </svg>
+          <figcaption>以编码器实测位置为基准，轴每运动一个设定的距离阈值，立即在 OUT 输出一个脉冲，实现“走一段距离、打一个点”的等距位置同步输出。该模式不使用外部激光同步信号，到达阈值后即时出光。</figcaption>
         </figure>
       </article>
 
       <article class="mode-panel">
-        <div class="mode-head"><span class="num">03</span><h3>激光同步模式</h3></div>
-        <p>控制板在硬件层面比对运动状态与出光使能信号，仅在轴运动进入匀速区间时才允许激光使能有效，加减速阶段自动关闭出光，从而避免起停留边过烧或能量不均。</p>
-        <figure class="diagram">
-          <svg viewBox="0 0 640 190" role="img" aria-label="激光同步模式时序：激光使能仅在运动进入匀速区间时置高，加减速阶段自动关闭">
-            <text class="lbl" x="175" y="18" text-anchor="middle">加速</text>
-            <text class="lbl" x="325" y="18" text-anchor="middle">匀速</text>
-            <text class="lbl" x="475" y="18" text-anchor="middle">减速</text>
-            <line class="guide" x1="250" y1="28" x2="250" y2="160"/>
-            <line class="guide" x1="400" y1="28" x2="400" y2="160"/>
-
-            <text class="lbl-strong" x="20" y="63">运动状态</text>
-            <line class="axis" x1="90" y1="95" x2="580" y2="95"/>
-            <polyline class="sig" points="100,95 250,40 400,40 550,95"/>
-
-            <text class="lbl-strong" x="20" y="146">激光使能</text>
-            <line class="axis" x1="90" y1="150" x2="580" y2="150"/>
-            <polyline class="sig-accent" points="90,150 250,150 250,132 400,132 400,150 580,150"/>
+        <div class="mode-head"><span class="num">05</span><h3>有激光同步 PSO 距离输出</h3></div>
+        <p>与“无激光同步 PSO 距离输出”相同基于运动距离触发，但到达距离阈值后并不立即出光，而是等待外部激光同步信号的下一个边沿到来时才输出脉冲，使出光时刻与激光器工作节拍对齐。</p>
+<figure class="diagram">
+          <svg viewBox="0 0 460 126" role="img" aria-label="有激光同步 PSO 距离输出时序：到达距离阈值后需等待下一个激光同步信号边沿才输出脉冲">
+<text class="lbl-strong" x="15" y="34">位置</text>
+<path class="sig-accent" d="M95.0,40.9 L440.0,21.1"/>
+<circle class="fill-accent" cx="164.0" cy="36.9" r="3.4"/>
+<circle class="fill-accent" cx="233.0" cy="33.0" r="3.4"/>
+<circle class="fill-accent" cx="302.0" cy="29.0" r="3.4"/>
+<circle class="fill-accent" cx="371.0" cy="25.1" r="3.4"/>
+<text class="lbl-strong" x="15" y="68">同步信号</text>
+<path class="sig" d="M95.0,74.0 L95.0,74.0 L95.0,54.0 L105.8,54.0 L105.8,74.0 L116.6,74.0 L116.6,54.0 L127.3,54.0 L127.3,74.0 L138.1,74.0 L138.1,54.0 L148.9,54.0 L148.9,74.0 L159.7,74.0 L159.7,54.0 L170.5,54.0 L170.5,74.0 L181.2,74.0 L181.2,54.0 L192.0,54.0 L192.0,74.0 L202.8,74.0 L202.8,54.0 L213.6,54.0 L213.6,74.0 L224.4,74.0 L224.4,54.0 L235.2,54.0 L235.2,74.0 L245.9,74.0 L245.9,54.0 L256.7,54.0 L256.7,74.0 L267.5,74.0 L267.5,54.0 L278.3,54.0 L278.3,74.0 L289.1,74.0 L289.1,54.0 L299.8,54.0 L299.8,74.0 L310.6,74.0 L310.6,54.0 L321.4,54.0 L321.4,74.0 L332.2,74.0 L332.2,54.0 L343.0,54.0 L343.0,74.0 L353.8,74.0 L353.8,54.0 L364.5,54.0 L364.5,74.0 L375.3,74.0 L375.3,54.0 L386.1,54.0 L386.1,74.0 L396.9,74.0 L396.9,54.0 L407.7,54.0 L407.7,74.0 L418.4,74.0 L418.4,54.0 L429.2,54.0 L429.2,74.0 L440.0,74.0 L440.0,74.0"/>
+<text class="lbl-strong" x="15" y="102">OUT</text>
+<path class="sig-accent" d="M95.0,108.0 L184.7,108.0 L184.7,88.0 L189.7,88.0 L189.7,108.0 M189.7,108.0 L257.1,108.0 L257.1,88.0 L262.1,88.0 L262.1,108.0 M262.1,108.0 L319.2,108.0 L319.2,88.0 L324.2,88.0 L324.2,108.0 M324.2,108.0 L391.7,108.0 L391.7,88.0 L396.7,88.0 L396.7,108.0 L440.0,108.0"/>
+<line class="guide" x1="164.0" y1="20.0" x2="164.0" y2="108.0"/>
+<line class="guide" x1="184.7" y1="54.0" x2="184.7" y2="108.0"/>
+<line class="guide" x1="233.0" y1="20.0" x2="233.0" y2="108.0"/>
+<line class="guide" x1="257.1" y1="54.0" x2="257.1" y2="108.0"/>
+<line class="guide" x1="302.0" y1="20.0" x2="302.0" y2="108.0"/>
+<line class="guide" x1="319.2" y1="54.0" x2="319.2" y2="108.0"/>
+<line class="guide" x1="371.0" y1="20.0" x2="371.0" y2="108.0"/>
+<line class="guide" x1="391.7" y1="54.0" x2="391.7" y2="108.0"/>
           </svg>
-          <figcaption>激光使能与运动状态硬件级联动：只有轴运动进入匀速区间（图中橙色高电平段）才允许出光，加减速阶段自动关闭激光，避免起停留边过烧。</figcaption>
+          <figcaption>触发条件与模式4相同（按运动距离阈值），但到达阈值后并不立即出光，而是等待激光同步信号的下一个边沿到来时才输出脉冲（图中 OUT 相对位置标记略有滞后），使出光时刻与激光器自身工作节拍对齐，避免抢拍或漏拍。</figcaption>
+        </figure>
+      </article>
+
+      <div class="mode-group"><h4>定量脉冲输出（PEG）</h4></div>
+
+      <article class="mode-panel">
+        <div class="mode-head"><span class="num">06</span><h3>无激光同步 PEG 定量脉冲输出</h3></div>
+        <p>启动引擎后立即按设定频率、占空比连续输出固定数量的脉冲，发送完毕自动停止；不依赖外部 TTL 边沿触发，也不需要激光同步，适合由上位机主动发起的定量打点。</p>
+<figure class="diagram">
+          <svg viewBox="0 0 460 92" role="img" aria-label="无激光同步 PEG 定量脉冲输出时序：使能置1后立即输出设定数量的脉冲串">
+<text class="lbl-strong" x="15" y="34">使能 EN</text>
+<path class="sig" d="M95.0,40.0 L136.4,40.0 L136.4,20.0 L440.0,20.0"/>
+<text class="lbl-strong" x="15" y="68">OUT</text>
+<path class="sig-accent" d="M95.0,74.0 L136.4,74.0 L136.4,54.0 L142.4,54.0 L142.4,74.0 L150.4,74.0 L150.4,54.0 L156.4,54.0 L156.4,74.0 L164.4,74.0 L164.4,54.0 L170.4,54.0 L170.4,74.0 L178.4,74.0 L178.4,54.0 L184.4,54.0 L184.4,74.0 L192.4,74.0 L192.4,54.0 L198.4,54.0 L198.4,74.0 L206.4,74.0 L206.4,54.0 L212.4,54.0 L212.4,74.0 L220.4,74.0 L220.4,54.0 L226.4,54.0 L226.4,74.0 L234.4,74.0 L440.0,74.0"/>
+<line class="guide" x1="136.4" y1="20.0" x2="136.4" y2="74.0"/>
+          </svg>
+          <figcaption>使能位由 0 翻为 1 后，立即按设定频率、占空比连续输出固定数量的脉冲，发送完毕自动停止；不依赖外部 TTL 边沿触发，也不需要激光同步信号。</figcaption>
         </figure>
       </article>
 
       <article class="mode-panel">
-        <div class="mode-head"><span class="num">04</span><h3>功率调制模式</h3></div>
-        <p>通过 PWM 占空比对激光输出功率进行实时调制，占空比与目标功率百分比对应，可配合运动速度或工艺参数动态调整，适配不同材料对能量密度的需求。</p>
-        <figure class="diagram">
-          <svg viewBox="0 0 640 200" role="img" aria-label="功率调制模式时序：PWM 占空比由低到高分档变化，对应输出功率同步提升">
-            <text class="lbl" x="175" y="18" text-anchor="middle">占空比 25%</text>
-            <text class="lbl" x="325" y="18" text-anchor="middle">占空比 50%</text>
-            <text class="lbl" x="475" y="18" text-anchor="middle">占空比 75%</text>
-            <line class="guide" x1="250" y1="28" x2="250" y2="165"/>
-            <line class="guide" x1="400" y1="28" x2="400" y2="165"/>
-
-            <text class="lbl-strong" x="20" y="63">PWM 输出</text>
-            <line class="axis" x1="90" y1="100" x2="560" y2="100"/>
-            <polyline class="sig-accent" points="100,100 122.5,100 122.5,65 130,65 130,100 152.5,100 152.5,65 160,65 160,100 182.5,100 182.5,65 190,65 190,100 212.5,100 212.5,65 220,65 220,100 242.5,100 242.5,65 250,65 250,100 265.0,100 265.0,65 280,65 280,100 295.0,100 295.0,65 310,65 310,100 325.0,100 325.0,65 340,65 340,100 355.0,100 355.0,65 370,65 370,100 385.0,100 385.0,65 400,65 400,100 407.5,100 407.5,65 430,65 430,100 437.5,100 437.5,65 460,65 460,100 467.5,100 467.5,65 490,65 490,100 497.5,100 497.5,65 520,65 520,100 527.5,100 527.5,65 550,65 550,100"/>
-
-            <text class="lbl-strong" x="20" y="133">对应功率</text>
-            <line class="axis" x1="90" y1="150" x2="560" y2="150"/>
-            <polyline class="sig" points="90,150 250,150 250,132 400,132 400,114 560,114"/>
+        <div class="mode-head"><span class="num">07</span><h3>有激光同步 PEG 输出</h3></div>
+        <p>由外部 TTL 边沿触发启动，但脉冲串中的每一个脉冲都进一步与激光同步信号对齐后再输出，适合对出光时刻要求更严格的触发场景。</p>
+<figure class="diagram">
+          <svg viewBox="0 0 460 126" role="img" aria-label="有激光同步 PEG 输出时序：外部边沿触发后，脉冲串逐个与激光同步信号对齐输出">
+<text class="lbl-strong" x="15" y="34">TTL-IN</text>
+<path class="sig" d="M95.0,40.0 L143.3,40.0 L143.3,20.0 L157.1,20.0 L157.1,40.0 L440.0,40.0"/>
+<text class="lbl-strong" x="15" y="68">同步信号</text>
+<path class="sig" d="M95.0,74.0 L143.3,74.0 L143.3,54.0 L155.7,54.0 L155.7,74.0 L168.0,74.0 L168.0,54.0 L180.4,54.0 L180.4,74.0 L192.8,74.0 L192.8,54.0 L205.1,54.0 L205.1,74.0 L217.5,74.0 L217.5,54.0 L229.8,54.0 L229.8,74.0 L242.2,74.0 L242.2,54.0 L254.6,54.0 L254.6,74.0 L266.9,74.0 L266.9,54.0 L279.3,54.0 L279.3,74.0 L291.7,74.0 L291.7,54.0 L304.0,54.0 L304.0,74.0 L316.4,74.0 L316.4,54.0 L328.7,54.0 L328.7,74.0 L341.1,74.0 L341.1,54.0 L353.5,54.0 L353.5,74.0 L365.8,74.0 L365.8,54.0 L378.2,54.0 L378.2,74.0 L390.6,74.0 L390.6,54.0 L402.9,54.0 L402.9,74.0 L415.3,74.0 L415.3,54.0 L427.6,54.0 L427.6,74.0 L440.0,74.0 L440.0,74.0"/>
+<text class="lbl-strong" x="15" y="102">OUT</text>
+<path class="sig-accent" d="M95.0,108.0 L143.3,108.0 L143.3,88.0 L148.3,88.0 L148.3,108.0 M148.3,108.0 L168.1,108.0 L168.1,88.0 L173.1,88.0 L173.1,108.0 M173.1,108.0 L193.0,108.0 L193.0,88.0 L198.0,88.0 L198.0,108.0 M198.0,108.0 L217.8,108.0 L217.8,88.0 L222.8,88.0 L222.8,108.0 M222.8,108.0 L242.7,108.0 L242.7,88.0 L247.7,88.0 L247.7,108.0 M247.7,108.0 L267.5,108.0 L267.5,88.0 L272.5,88.0 L272.5,108.0 L440.0,108.0"/>
+<line class="guide" x1="143.3" y1="20.0" x2="143.3" y2="108.0"/>
           </svg>
-          <figcaption>PWM 占空比分档示意（25%→50%→75%）：占空比与输出功率百分比对应，可结合运动速度或工艺参数动态调整，适配不同材料的能量密度需求。</figcaption>
+          <figcaption>由外部 TTL-IN 边沿触发启动，脉冲串中的每一个脉冲都进一步与激光同步信号的节拍对齐后再输出，兼具“外部触发启动”与“逐脉冲同步激光节拍”两层特性。</figcaption>
+        </figure>
+      </article>
+
+      <div class="mode-group"><h4>位置阵列打点（PEG 数组）</h4></div>
+
+      <article class="mode-panel">
+        <div class="mode-head"><span class="num">08</span><h3>PEG 大容量数组单发打点</h3></div>
+        <p>预先下发一系列目标位置坐标到板卡缓存；引擎启动后按数组顺序逐点比较实测位置，每当到达一个目标坐标就输出一个脉冲，实现沿任意轨迹的批量精确打点，不依赖激光同步信号。</p>
+<figure class="diagram">
+          <svg viewBox="0 0 460 92" role="img" aria-label="PEG 大容量数组单发打点时序：实测位置每到达数组中的一个目标坐标即输出一个脉冲">
+<text class="lbl-strong" x="15" y="34">位置</text>
+<path class="sig-accent" d="M95.0,40.9 L440.0,21.1"/>
+<circle class="fill-accent" cx="157.1" cy="37.3" r="3.4"/>
+<circle class="fill-accent" cx="222.6" cy="33.6" r="3.4"/>
+<circle class="fill-accent" cx="274.4" cy="30.6" r="3.4"/>
+<circle class="fill-accent" cx="336.5" cy="27.0" r="3.4"/>
+<circle class="fill-accent" cx="398.6" cy="23.5" r="3.4"/>
+<text class="lbl-strong" x="15" y="68">OUT</text>
+<path class="sig-accent" d="M95.0,74.0 L157.1,74.0 L157.1,54.0 L162.1,54.0 L162.1,74.0 M162.1,74.0 L222.6,74.0 L222.6,54.0 L227.6,54.0 L227.6,74.0 M227.6,74.0 L274.4,74.0 L274.4,54.0 L279.4,54.0 L279.4,74.0 M279.4,74.0 L336.5,74.0 L336.5,54.0 L341.5,54.0 L341.5,74.0 M341.5,74.0 L398.6,74.0 L398.6,54.0 L403.6,54.0 L403.6,74.0 L440.0,74.0"/>
+<line class="guide" x1="157.1" y1="20.0" x2="157.1" y2="74.0"/>
+<line class="guide" x1="222.6" y1="20.0" x2="222.6" y2="74.0"/>
+<line class="guide" x1="274.4" y1="20.0" x2="274.4" y2="74.0"/>
+<line class="guide" x1="336.5" y1="20.0" x2="336.5" y2="74.0"/>
+<line class="guide" x1="398.6" y1="20.0" x2="398.6" y2="74.0"/>
+          </svg>
+          <figcaption>预先将一串目标位置坐标下发到板卡内部的大容量缓存中；引擎启动后按数组顺序逐点比较实测位置，每当实测位置到达一个目标坐标，就在该点输出一个脉冲，可沿任意轨迹批量精确打点，不使用激光同步信号。</figcaption>
         </figure>
       </article>
 
       <article class="mode-panel">
-        <div class="mode-head"><span class="num">05</span><h3>参数组态模式</h3></div>
-        <p>上位机通过配置协议在线下发运动、保护、激光相关参数，控制板校验后写入 Flash，掉电重启自动加载，无需重新烧录固件即可完成参数级别的产线调试。</p>
-        <figure class="diagram">
-          <svg viewBox="0 0 640 190" role="img" aria-label="参数组态模式时序：上位机下发参数，控制板校验并写入 Flash 后返回确认">
-            <defs>
-              <marker id="arr5" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                <path d="M0,0 L10,5 L0,10 z" class="fill-accent"/>
-              </marker>
-            </defs>
-            <text class="lbl-strong" x="140" y="25" text-anchor="middle">上位机</text>
-            <text class="lbl-strong" x="500" y="25" text-anchor="middle">控制板</text>
-            <line class="guide" x1="140" y1="35" x2="140" y2="165"/>
-            <line class="guide" x1="500" y1="35" x2="500" y2="165"/>
-
-            <line class="sig-accent" x1="140" y1="65" x2="493" y2="65" marker-end="url(#arr5)"/>
-            <text class="lbl" x="320" y="57" text-anchor="middle">下发参数</text>
-
-            <path class="sig" d="M500,90 C548,90 548,112 500,112" marker-end="url(#arr5)"/>
-            <text class="lbl" x="558" y="97">校验 /</text>
-            <text class="lbl" x="558" y="111">写入 Flash</text>
-
-            <line class="sig-accent" x1="500" y1="145" x2="147" y2="145" marker-end="url(#arr5)"/>
-            <text class="lbl" x="320" y="137" text-anchor="middle">返回确认（完成）</text>
+        <div class="mode-head"><span class="num">09</span><h3>有激光同步的 PEG 数组打点</h3></div>
+        <p>工作方式与“PEG 大容量数组单发打点”相同，按预置的目标位置数组逐点比较、逐点出光，但每次到达目标位置后需等待激光同步信号的下一个边沿才实际输出脉冲。</p>
+<figure class="diagram">
+          <svg viewBox="0 0 460 126" role="img" aria-label="有激光同步的 PEG 数组打点时序：到达数组目标坐标后需等待激光同步信号边沿才输出脉冲">
+<text class="lbl-strong" x="15" y="34">位置</text>
+<path class="sig-accent" d="M95.0,40.9 L440.0,21.1"/>
+<circle class="fill-accent" cx="164.0" cy="36.9" r="3.4"/>
+<circle class="fill-accent" cx="233.0" cy="33.0" r="3.4"/>
+<circle class="fill-accent" cx="302.0" cy="29.0" r="3.4"/>
+<circle class="fill-accent" cx="371.0" cy="25.1" r="3.4"/>
+<text class="lbl-strong" x="15" y="68">同步信号</text>
+<path class="sig" d="M95.0,74.0 L95.0,74.0 L95.0,54.0 L105.8,54.0 L105.8,74.0 L116.6,74.0 L116.6,54.0 L127.3,54.0 L127.3,74.0 L138.1,74.0 L138.1,54.0 L148.9,54.0 L148.9,74.0 L159.7,74.0 L159.7,54.0 L170.5,54.0 L170.5,74.0 L181.2,74.0 L181.2,54.0 L192.0,54.0 L192.0,74.0 L202.8,74.0 L202.8,54.0 L213.6,54.0 L213.6,74.0 L224.4,74.0 L224.4,54.0 L235.2,54.0 L235.2,74.0 L245.9,74.0 L245.9,54.0 L256.7,54.0 L256.7,74.0 L267.5,74.0 L267.5,54.0 L278.3,54.0 L278.3,74.0 L289.1,74.0 L289.1,54.0 L299.8,54.0 L299.8,74.0 L310.6,74.0 L310.6,54.0 L321.4,54.0 L321.4,74.0 L332.2,74.0 L332.2,54.0 L343.0,54.0 L343.0,74.0 L353.8,74.0 L353.8,54.0 L364.5,54.0 L364.5,74.0 L375.3,74.0 L375.3,54.0 L386.1,54.0 L386.1,74.0 L396.9,74.0 L396.9,54.0 L407.7,54.0 L407.7,74.0 L418.4,74.0 L418.4,54.0 L429.2,54.0 L429.2,74.0 L440.0,74.0 L440.0,74.0"/>
+<text class="lbl-strong" x="15" y="102">OUT</text>
+<path class="sig-accent" d="M95.0,108.0 L188.2,108.0 L188.2,88.0 L193.2,88.0 L193.2,108.0 M193.2,108.0 L253.7,108.0 L253.7,88.0 L258.7,88.0 L258.7,108.0 M258.7,108.0 L322.7,108.0 L322.7,88.0 L327.7,88.0 L327.7,108.0 M327.7,108.0 L388.2,108.0 L388.2,88.0 L393.2,88.0 L393.2,108.0 L440.0,108.0"/>
+<line class="guide" x1="164.0" y1="20.0" x2="164.0" y2="108.0"/>
+<line class="guide" x1="233.0" y1="20.0" x2="233.0" y2="108.0"/>
+<line class="guide" x1="302.0" y1="20.0" x2="302.0" y2="108.0"/>
+<line class="guide" x1="371.0" y1="20.0" x2="371.0" y2="108.0"/>
           </svg>
-          <figcaption>上位机在线下发参数，控制板校验后写入 Flash 并掉电保存，完成后返回确认，无需重新烧录固件即可完成产线级参数调整。</figcaption>
+          <figcaption>工作方式与模式8相同，按预置的目标位置数组逐点比较、逐点出光；区别在于每次到达目标位置后，还需等待激光同步信号的下一个边沿才实际输出脉冲，用于对同步节拍要求较高的批量打点工艺。</figcaption>
         </figure>
       </article>
 
       <article class="mode-panel">
-        <div class="mode-head"><span class="num">06</span><h3>EtherCAT 组网模式</h3></div>
-        <p>控制板作为标准 EtherCAT 从站接入主站运动网络，按 CoE 协议周期性交换过程数据，支持主站在线扫描识别、状态监控与网络内多轴协同调度。</p>
-        <figure class="diagram">
-          <svg viewBox="0 0 640 170" role="img" aria-label="EtherCAT 组网模式时序：主站与本控制板按固定周期 T 周期性交换过程数据帧">
-            <defs>
-              <marker id="arr6" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M0,0 L10,5 L0,10 z" class="fill-accent"/>
-              </marker>
-            </defs>
-            <text class="lbl-strong" x="120" y="25" text-anchor="middle">EtherCAT 主站</text>
-            <text class="lbl-strong" x="520" y="25" text-anchor="middle">本控制板（从站）</text>
-            <line class="guide" x1="120" y1="35" x2="120" y2="130"/>
-            <line class="guide" x1="520" y1="35" x2="520" y2="130"/>
-
-            <line class="axis" x1="120" y1="85" x2="520" y2="85"/>
-            <circle class="fill-accent" cx="160" cy="85" r="4"/>
-            <circle class="fill-accent" cx="220" cy="85" r="4"/>
-            <circle class="fill-accent" cx="280" cy="85" r="4"/>
-            <circle class="fill-accent" cx="340" cy="85" r="4"/>
-            <circle class="fill-accent" cx="400" cy="85" r="4"/>
-            <circle class="fill-accent" cx="460" cy="85" r="4"/>
-
-            <line class="sig" x1="160" y1="68" x2="220" y2="68" marker-start="url(#arr6)" marker-end="url(#arr6)"/>
-            <text class="lbl" x="190" y="62" text-anchor="middle">周期 T</text>
-
-            <text class="lbl" x="160" y="105" text-anchor="middle">过程数据帧</text>
-            <text class="lbl" x="160" y="118" text-anchor="middle">（CoE）</text>
+        <div class="mode-head"><span class="num">10</span><h3>PEG 划线分段长电平输出（双 Bank 联动）</h3></div>
+        <p>同时预置分段切换坐标与对应区间开光/关光电平两组数组；位置每越过一个切换点，输出即切换为该区间电平并长时间保持，得到随位置分段变化的长电平，适合沿轨迹分段开关光的连续加工场景。</p>
+<figure class="diagram">
+          <svg viewBox="0 0 460 92" role="img" aria-label="PEG 划线分段长电平输出时序：位置每越过一个分段切换点，输出电平切换为该段对应的开/关光状态并长时间保持">
+<text class="lbl-strong" x="15" y="34">位置</text>
+<path class="sig-accent" d="M95.0,40.9 L440.0,21.1"/>
+<circle class="fill-accent" cx="164.0" cy="36.9" r="3.4"/>
+<circle class="fill-accent" cx="250.2" cy="32.0" r="3.4"/>
+<circle class="fill-accent" cx="336.5" cy="27.0" r="3.4"/>
+<circle class="fill-accent" cx="405.5" cy="23.1" r="3.4"/>
+<text class="lbl-strong" x="15" y="68">OUT</text>
+<path class="sig-accent" d="M95.0,74.0 L95.0,74.0 L95.0,54.0 L164.0,54.0 L164.0,54.0 L164.0,74.0 L250.2,74.0 L250.2,74.0 L250.2,54.0 L336.5,54.0 L336.5,54.0 L336.5,74.0 L405.5,74.0 L405.5,74.0 L405.5,54.0 L440.0,54.0 L440.0,54.0"/>
+<line class="guide" x1="164.0" y1="20.0" x2="164.0" y2="74.0"/>
+<line class="guide" x1="250.2" y1="20.0" x2="250.2" y2="74.0"/>
+<line class="guide" x1="336.5" y1="20.0" x2="336.5" y2="74.0"/>
+<line class="guide" x1="405.5" y1="20.0" x2="405.5" y2="74.0"/>
           </svg>
-          <figcaption>控制板作为从站接入 EtherCAT 环网，按固定周期 T 与主站周期性交换 CoE 过程数据帧，支持在线扫描识别、状态监控与多轴协同调度。</figcaption>
+          <figcaption>同时预置两组数组：一组是行程上的分段切换坐标（Bank0），一组是对应每个区间的开光/关光电平（Bank1）；位置每越过一个切换点，输出即切换为该区间对应电平并长时间保持，得到的是随位置分段变化的长电平而非短脉冲，适合沿轨迹分段开关光的连续加工场景（如虚线、间隔划线）。</figcaption>
+        </figure>
+      </article>
+
+      <div class="mode-group"><h4>PWM 功率波形输出</h4></div>
+
+      <article class="mode-panel">
+        <div class="mode-head"><span class="num">11</span><h3>定量 PWM 输出</h3></div>
+        <p>按设定频率与占空比持续输出 PWM 波形，累计发满设定的脉冲个数后自动停止，无需额外发送停止指令，适合需要精确控制总能量或总加工次数的场景。</p>
+<figure class="diagram">
+          <svg viewBox="0 0 460 92" role="img" aria-label="定量 PWM 输出时序：按设定频率占空比持续输出，累计发满设定脉冲数后自动停止">
+<text class="lbl-strong" x="15" y="34">使能 EN</text>
+<path class="sig" d="M95.0,40.0 L129.5,40.0 L129.5,20.0 L440.0,20.0"/>
+<text class="lbl-strong" x="15" y="68">OUT</text>
+<path class="sig-accent" d="M95.0,74.0 L129.5,74.0 L129.5,54.0 L144.2,54.0 L144.2,74.0 L158.8,74.0 L158.8,54.0 L173.5,54.0 L173.5,74.0 L188.1,74.0 L188.1,54.0 L202.8,54.0 L202.8,74.0 L217.5,74.0 L217.5,54.0 L232.1,54.0 L232.1,74.0 L246.8,74.0 L246.8,54.0 L261.5,54.0 L261.5,74.0 L276.1,74.0 L276.1,54.0 L290.8,54.0 L290.8,74.0 L305.4,74.0 L305.4,54.0 L320.1,54.0 L320.1,74.0 L334.8,74.0 L334.8,54.0 L349.4,54.0 L349.4,74.0 L364.1,74.0 L440.0,74.0"/>
+<text class="lbl" x="370.1" y="59.0">定量停止</text>
+<line class="guide" x1="129.5" y1="20.0" x2="129.5" y2="74.0"/>
+          </svg>
+          <figcaption>按设定频率与占空比持续输出 PWM 波形，累计发满设定的脉冲个数后自动停止，无需额外发送停止指令，适合需要精确控制总能量或总加工次数的场景。</figcaption>
+        </figure>
+      </article>
+
+      <article class="mode-panel">
+        <div class="mode-head"><span class="num">12</span><h3>连续 PWM 无尽输出</h3></div>
+        <p>按设定频率与占空比持续输出 PWM 波形，不设脉冲数量上限，直至主动关闭使能为止；关闭时仅停止发波，已配置的频率占空比参数保持不变，可随时重新开启。</p>
+<figure class="diagram">
+          <svg viewBox="0 0 460 92" role="img" aria-label="连续 PWM 无尽输出时序：按设定频率占空比持续发波，直至主动关闭使能">
+<text class="lbl-strong" x="15" y="34">使能 EN</text>
+<path class="sig" d="M95.0,40.0 L129.5,40.0 L129.5,20.0 L405.5,20.0 L405.5,40.0 L440.0,40.0"/>
+<text class="lbl-strong" x="15" y="68">OUT</text>
+<path class="sig-accent" d="M95.0,74.0 L129.5,74.0 L129.5,54.0 L140.1,54.0 L140.1,74.0 L150.7,74.0 L150.7,54.0 L161.3,54.0 L161.3,74.0 L172.0,74.0 L172.0,54.0 L182.6,54.0 L182.6,74.0 L193.2,74.0 L193.2,54.0 L203.8,54.0 L203.8,74.0 L214.4,74.0 L214.4,54.0 L225.0,54.0 L225.0,74.0 L235.7,74.0 L235.7,54.0 L246.3,54.0 L246.3,74.0 L256.9,74.0 L256.9,54.0 L267.5,54.0 L267.5,74.0 L278.1,74.0 L278.1,54.0 L288.7,54.0 L288.7,74.0 L299.3,74.0 L299.3,54.0 L310.0,54.0 L310.0,74.0 L320.6,74.0 L320.6,54.0 L331.2,54.0 L331.2,74.0 L341.8,74.0 L341.8,54.0 L352.4,54.0 L352.4,74.0 L363.0,74.0 L363.0,54.0 L373.7,54.0 L373.7,74.0 L384.3,74.0 L384.3,54.0 L394.9,54.0 L394.9,74.0 L405.5,74.0 L440.0,74.0"/>
+<line class="guide" x1="129.5" y1="20.0" x2="129.5" y2="74.0"/>
+<line class="guide" x1="405.5" y1="20.0" x2="405.5" y2="74.0"/>
+          </svg>
+          <figcaption>按设定频率与占空比持续输出 PWM 波形，不设脉冲数量上限，直至主动将使能置 0 为止；关闭时仅停止发波，已配置的频率、占空比参数保持不变，可随时重新开启。</figcaption>
+        </figure>
+      </article>
+
+      <div class="mode-group"><h4>高精度追踪与旋转轴模式</h4></div>
+
+      <article class="mode-panel">
+        <div class="mode-head"><span class="num">13</span><h3>32.32 定点数无累计误差等间隔追踪打点</h3></div>
+        <p>只需下发起点坐标、终点坐标与高精度定点点间距，板卡即在内部自动按等间隔连续追踪打点，全程不产生累计舍入误差，尤其适合长行程、超大点数的等间距打点场景，无需逐点预先下发全部坐标。</p>
+<figure class="diagram">
+          <svg viewBox="0 0 460 92" role="img" aria-label="等间隔追踪打点时序：位置从起点连续变化到终点，OUT 按固定间距连续等距打点">
+<text class="lbl-strong" x="15" y="34">位置</text>
+<path class="sig-accent" d="M95.0,40.9 L440.0,21.1"/>
+<text class="lbl-strong" x="15" y="68">OUT</text>
+<path class="sig-accent" d="M95.0,74.0 L112.2,74.0 L112.2,54.0 L115.2,54.0 L115.2,74.0 M115.2,74.0 L124.7,74.0 L124.7,54.0 L127.7,54.0 L127.7,74.0 M127.7,74.0 L137.1,74.0 L137.1,54.0 L140.1,54.0 L140.1,74.0 M140.1,74.0 L149.5,74.0 L149.5,54.0 L152.5,54.0 L152.5,74.0 M152.5,74.0 L161.9,74.0 L161.9,54.0 L164.9,54.0 L164.9,74.0 M164.9,74.0 L174.4,74.0 L174.4,54.0 L177.4,54.0 L177.4,74.0 M177.4,74.0 L186.8,74.0 L186.8,54.0 L189.8,54.0 L189.8,74.0 M189.8,74.0 L199.2,74.0 L199.2,54.0 L202.2,54.0 L202.2,74.0 M202.2,74.0 L211.6,74.0 L211.6,54.0 L214.6,54.0 L214.6,74.0 M214.6,74.0 L224.0,74.0 L224.0,54.0 L227.0,54.0 L227.0,74.0 M227.0,74.0 L236.5,74.0 L236.5,54.0 L239.5,54.0 L239.5,74.0 M239.5,74.0 L248.9,74.0 L248.9,54.0 L251.9,54.0 L251.9,74.0 M251.9,74.0 L261.3,74.0 L261.3,54.0 L264.3,54.0 L264.3,74.0 M264.3,74.0 L273.7,74.0 L273.7,54.0 L276.7,54.0 L276.7,74.0 M276.7,74.0 L286.1,74.0 L286.1,54.0 L289.1,54.0 L289.1,74.0 M289.1,74.0 L298.6,74.0 L298.6,54.0 L301.6,54.0 L301.6,74.0 M301.6,74.0 L311.0,74.0 L311.0,54.0 L314.0,54.0 L314.0,74.0 M314.0,74.0 L323.4,74.0 L323.4,54.0 L326.4,54.0 L326.4,74.0 M326.4,74.0 L335.8,74.0 L335.8,54.0 L338.8,54.0 L338.8,74.0 M338.8,74.0 L348.2,74.0 L348.2,54.0 L351.2,54.0 L351.2,74.0 M351.2,74.0 L360.7,74.0 L360.7,54.0 L363.7,54.0 L363.7,74.0 M363.7,74.0 L373.1,74.0 L373.1,54.0 L376.1,54.0 L376.1,74.0 M376.1,74.0 L385.5,74.0 L385.5,54.0 L388.5,54.0 L388.5,74.0 M388.5,74.0 L397.9,74.0 L397.9,54.0 L400.9,54.0 L400.9,74.0 M400.9,74.0 L410.3,74.0 L410.3,54.0 L413.3,54.0 L413.3,74.0 M413.3,74.0 L422.8,74.0 L422.8,54.0 L425.8,54.0 L425.8,74.0 L440.0,74.0"/>
+          </svg>
+          <figcaption>只需下发起点坐标、终点坐标与点间距（间距拆分为整数与小数两部分的高精度定点数），板卡即在内部自动按等间隔连续追踪打点，全程不产生累计舍入误差，适合长行程、超大点数场景，无需逐点预先下发全部坐标。</figcaption>
+        </figure>
+      </article>
+
+      <article class="mode-panel">
+        <div class="mode-head"><span class="num">14</span><h3>旋转轴等角度螺旋钻孔</h3></div>
+        <p>面向可无限旋转的旋转轴（E轴），按设定的每圈脉冲当量、总圈数与角度间距自动生成螺旋钻孔轨迹，在旋转过程中按等角度间隔连续出光打孔，并结合角度基准信号逐圈校正，避免长时间连续旋转钻孔时的累积角度偏差。</p>
+<figure class="diagram">
+          <svg viewBox="0 0 460 92" role="img" aria-label="旋转轴等角度螺旋钻孔时序：旋转轴连续多圈运动，每圈内按等角度间隔连续出光打孔，每圈以角度基准信号Z校正一次">
+<text class="lbl-strong" x="15" y="34">圈数/位置</text>
+<path class="sig-accent" d="M95.0,42.0 L210.0,20.0 M210.0,42.0 L325.0,20.0 M325.0,42.0 L440.0,20.0"/>
+<circle class="fill-accent" cx="95.0" cy="42.0" r="3"/>
+<text class="lbl" x="95.0" y="55.0" text-anchor="middle">Z</text>
+<circle class="fill-accent" cx="210.0" cy="42.0" r="3"/>
+<text class="lbl" x="210.0" y="55.0" text-anchor="middle">Z</text>
+<circle class="fill-accent" cx="325.0" cy="42.0" r="3"/>
+<text class="lbl" x="325.0" y="55.0" text-anchor="middle">Z</text>
+<text class="lbl-strong" x="15" y="68">OUT</text>
+<path class="sig-accent" d="M95.0,74.0 L104.6,74.0 L104.6,54.0 L107.6,54.0 L107.6,74.0 L123.8,74.0 L123.8,54.0 L126.8,54.0 L126.8,74.0 L142.9,74.0 L142.9,54.0 L145.9,54.0 L145.9,74.0 L162.1,74.0 L162.1,54.0 L165.1,54.0 L165.1,74.0 L181.2,74.0 L181.2,54.0 L184.2,54.0 L184.2,74.0 L200.4,74.0 L200.4,54.0 L203.4,54.0 L203.4,74.0 L219.6,74.0 L219.6,54.0 L222.6,54.0 L222.6,74.0 L238.8,74.0 L238.8,54.0 L241.8,54.0 L241.8,74.0 L257.9,74.0 L257.9,54.0 L260.9,54.0 L260.9,74.0 L277.1,74.0 L277.1,54.0 L280.1,54.0 L280.1,74.0 L296.2,74.0 L296.2,54.0 L299.2,54.0 L299.2,74.0 L315.4,74.0 L315.4,54.0 L318.4,54.0 L318.4,74.0 L334.6,74.0 L334.6,54.0 L337.6,54.0 L337.6,74.0 L353.8,74.0 L353.8,54.0 L356.8,54.0 L356.8,74.0 L372.9,74.0 L372.9,54.0 L375.9,54.0 L375.9,74.0 L392.1,74.0 L392.1,54.0 L395.1,54.0 L395.1,74.0 L411.2,74.0 L411.2,54.0 L414.2,54.0 L414.2,74.0 L430.4,74.0 L430.4,54.0 L433.4,54.0 L433.4,74.0 L440.0,74.0"/>
+          </svg>
+          <figcaption>面向可无限旋转的旋转轴（E 轴），按设定的每圈脉冲当量、总圈数与角度间距自动生成螺旋钻孔轨迹，在连续旋转过程中按等角度间隔出光打孔，并结合旋转轴的角度基准信号（图中 Z 标记）逐圈校正，保证长时间连续旋转钻孔时角度位置不产生累积偏差。</figcaption>
         </figure>
       </article>
 
@@ -546,7 +593,7 @@
       <tr>
         <td class="brand-name">ACS<span class="brand-en">ACS Motion Control</span></td>
         <td class="dim">高端多轴运动控制器 / EtherCAT 主站方案</td>
-        <td>EtherCAT 从站接入与双轴联动场景的国产化选型</td>
+        <td>EtherCAT 从站接入与多轴联动场景的国产化选型</td>
       </tr>
       <tr>
         <td class="brand-name">固高科技<span class="brand-en">Googol Technology</span></td>
@@ -566,7 +613,7 @@
       <tr>
         <td class="brand-name">Aerotech<span class="brand-en">（对应 “erotech”）</span></td>
         <td class="dim">高精度运动控制器与配套固件</td>
-        <td>激光加工双轴联动场景的功能对标（非精度等级对标）</td>
+        <td>激光加工多轴联动场景的功能对标（非精度等级对标）</td>
       </tr>
       <tr>
         <td class="brand-name">Elmo<span class="brand-en">Elmo Motion Control</span></td>
